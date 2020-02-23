@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using first_rest_api.Models;
+using first_rest_api.ResponseObjects;
 
 namespace first_rest_api.Repositories
 {
     public interface IUserDetailsRepository
     {
-        List<UserDetails> GetAllUsers();
+        Task<ResultModels<UserDetails>> GetAllUsers();
         
-        UserDetails GetUserDetailsById(int id);
-
+        Task<UserDetails> GetUserDetailsById(int id);
 
         int CreateUser(UserDetails ud);
 

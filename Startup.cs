@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
-using first_rest_api.Models;
 using first_rest_api.Utilities;
 using System;
+using AutoMapper;
 
 namespace first_rest_api
 {
@@ -24,8 +23,10 @@ namespace first_rest_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            /*services.AddDbContext<TodoContext>(opt =>
-               opt.UseInMemoryDatabase("TodoList")); */
+            //Auto Mapper Configurations
+            var mappingConfig = new MapperConfiguration(mc => {mc.AddProfile(new MappingProfile());});
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
             services.AddControllers();
 
         }
@@ -37,9 +38,6 @@ namespace first_rest_api
             {
                 app.UseDeveloperExceptionPage();
             }
-
-             Console.WriteLine("Content Root Path : "+ env.ContentRootPath);
-             Console.WriteLine("Dev Environment : "+ env.IsDevelopment());
 
             var cb = new ConfigurationBuilder()
                .SetBasePath(env.ContentRootPath)

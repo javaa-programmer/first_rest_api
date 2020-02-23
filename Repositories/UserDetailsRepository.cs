@@ -4,57 +4,46 @@ using System.Threading.Tasks;
 using System;
 using Microsoft.Data.SqlClient;
 using first_rest_api.Utilities;
-
+using first_rest_api.ResponseObjects;
 
 namespace first_rest_api.Repositories {
 
     public class UserDetailsRepository : IUserDetailsRepository {
 
-        public UserDetails GetUserDetailsById(int userId)
+        public async Task<UserDetails> GetUserDetailsById(int userId)
         {
-            string connetionString = @"Data Source=localhost;Initial Catalog=first_rest_api;User ID=sa;Password=Niamul@2012";
-
             string commandText = @"SELECT * FROM [dbo].[USER_DETAILS]  
                                         where [id] = " + userId ;
 
-            //SqlConnection conn = new SqlConnection(Constants.GetConnectionString());
-            SqlConnection conn = new SqlConnection(connetionString);
-
-            conn.Open();
-            var tran = conn.BeginTransaction();
-            var command = new SqlCommand(commandText, conn, tran);
-            SqlDataReader rdr = command.ExecuteReader(); 
-            Console.Write("rdr.hasrows : " + rdr.HasRows);
+            using(var con = await DbHelper.GetDbConnection().ConfigureAwait(false)) {
+                var tran = con.BeginTransaction();
+                var command = new SqlCommand(commandText, con, tran);
+                SqlDataReader rdr = command.ExecuteReader(); 
                 
-            List<UserDetails> userDetailsList = new List<UserDetails>();
-            while (rdr.Read()) {
-                var _userDetail = new UserDetails();
-                _userDetail.id = Convert.ToInt32(rdr["id"]);
-                _userDetail.name = rdr["name"].ToString();
-                _userDetail.address = rdr["address"].ToString();
-                _userDetail.createdBy = rdr["createdBy"].ToString();
-                _userDetail.createdDate = (DateTime) rdr["createdDate"];
-                userDetailsList.Add(_userDetail);
+                List<UserDetails> userDetailsList = new List<UserDetails>();
+                while (rdr.Read()) {
+                    var _userDetail = new UserDetails();
+                    _userDetail.id = Convert.ToInt32(rdr["id"]);
+                    _userDetail.name = rdr["name"].ToString();
+                    _userDetail.address = rdr["address"].ToString();
+                    _userDetail.createdBy = rdr["createdBy"].ToString();
+                    _userDetail.createdDate = (DateTime) rdr["createdDate"];
+                    userDetailsList.Add(_userDetail);
+                }
+                
+                return userDetailsList[0]; 
             }
-            conn.Close();
-            return userDetailsList[0];    
+               
         }
 
-        public List<UserDetails> GetAllUsers() {
+        public async Task<ResultModels<UserDetails>> GetAllUsers() {
                 
-                //string connetionString = @"Data Source=localhost;Initial Catalog=first_rest_api;User ID=sa;Password=Niamul@2012";
+            string commandText = @"SELECT * FROM [dbo].[USER_DETAILS]  
+                                    ORDER BY createdDate DESC";
 
-               SqlConnection connection = new SqlConnection(Constants.GetConnectionString());
-                
-              //  SqlConnection connection = new SqlConnection(connetionString);
-                Console.WriteLine("Connection State : "+ connection.State);
-                string commandText = @"SELECT * FROM [dbo].[USER_DETAILS]  
-                                        ORDER BY createdDate DESC";
-
-            
-                connection.Open();
-                var tran = connection.BeginTransaction();
-                var command = new SqlCommand(commandText, connection, tran);
+            using(var con = await DbHelper.GetDbConnection().ConfigureAwait(false)) {
+                var tran = con.BeginTransaction();
+                var command = new SqlCommand(commandText, con, tran);
                 SqlDataReader rdr = command.ExecuteReader(); 
                 List<UserDetails> userDetailsList = new List<UserDetails>();
                 while (rdr.Read()) {
@@ -66,8 +55,9 @@ namespace first_rest_api.Repositories {
                     _userDetail.createdDate = (DateTime) rdr["createdDate"];
                     userDetailsList.Add(_userDetail);
                 }
-                connection.Close();
-                return userDetailsList;
+                con.Close();
+                return new ResultModels<UserDetails>(userDetailsList);
+            }
             
         }
 

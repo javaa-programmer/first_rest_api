@@ -9,11 +9,7 @@ namespace first_rest_api.Utilities {
 
         public static string GetFormattedDate(DateTime dateTime) => "\'" + string.Format("{0:dd-MMM-yyyy}", dateTime) + "\'";
     
-        public static string GetDbConnection() {
-            return null;
-        }
-
-        public static async Task<SqlConnection> OpenConnection() {
+        public static async Task<SqlConnection> GetDbConnection() {
             SqlConnection conn = new SqlConnection(Constants.GetConnectionString());
             if (conn.State == System.Data.ConnectionState.Closed) 
             {
@@ -22,7 +18,7 @@ namespace first_rest_api.Utilities {
             return conn;
         }
 
-        public static async Task CloseConnection(SqlConnection conn) {
+        public static async Task CloseDbConnection(SqlConnection conn) {
             if (conn.State == System.Data.ConnectionState.Open) 
             {
                 await conn.CloseAsync().ConfigureAwait(false);

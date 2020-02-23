@@ -126,3 +126,4 @@ D:\c#examples\first_web_api\first_rest_api\bin\Debug\netcoreapp3.0\System.Collec
 D:\c#examples\first_web_api\first_rest_api\bin\Debug\netcoreapp3.0\System.ComponentModel.Annotations.dll
 D:\c#examples\first_web_api\first_rest_api\bin\Debug\netcoreapp3.0\System.Diagnostics.DiagnosticSource.dll
 D:\c#examples\first_web_api\first_rest_api\bin\Debug\netcoreapp3.0\System.Runtime.CompilerServices.Unsafe.dll
+D:\c#examples\first_web_api\first_rest_api\bin\Debug\netcoreapp3.0\AutoMapper.dll
