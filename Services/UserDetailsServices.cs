@@ -23,9 +23,9 @@ namespace first_rest_api.Services {
             return userDetails;
         }
 
-        public int CreateUser(UserDetails ud) {
+        public async Task<UserDetails> CreateUser(UserDetails ud) {
 
-            return _userRepository.CreateUser(ud);
+            return await _userRepository.CreateUser(ud);
         }
     }
 }

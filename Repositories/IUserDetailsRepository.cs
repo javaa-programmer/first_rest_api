@@ -11,7 +11,7 @@ namespace first_rest_api.Repositories
         
         Task<UserDetails> GetUserDetailsById(int id);
 
-        int CreateUser(UserDetails ud);
+        Task<UserDetails> CreateUser(UserDetails ud);
 
     }
 }

@@ -72,7 +72,7 @@ namespace first_rest_api.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public int CreateUserDetails([FromBody] RequestEntities re)
+        public async Task<ActionResult> CreateUserDetails([FromBody] RequestEntities re)
         {
             UserDetails userDetails = new UserDetails();
             userDetails.name = re.UserDetails.GetProperty("name").GetString();
@@ -80,8 +80,11 @@ namespace first_rest_api.Controllers
             userDetails.createdBy = "niamuls";
             userDetails.createdDate = DateTime.Now;
 
-            int id = userDetailsSer.CreateUser(userDetails);
-            return id;
+            var userDt = await userDetailsSer.CreateUser(userDetails);
+            UserDetailsObject udo = Mapper.Map<UserDetails, UserDetailsObject>(userDt);
+            return Ok(new ReturnedObject<UserDetailsObject>(){
+                Data = udo
+            });
         }
 
         // DELETE: api/UserDetails/5

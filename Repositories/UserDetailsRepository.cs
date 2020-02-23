@@ -39,7 +39,7 @@ namespace first_rest_api.Repositories {
         public async Task<ResultModels<UserDetails>> GetAllUsers() {
                 
             string commandText = @"SELECT * FROM [dbo].[USER_DETAILS]  
-                                    ORDER BY createdDate DESC";
+                                    ORDER BY id";
 
             using(var con = await DbHelper.GetDbConnection().ConfigureAwait(false)) {
                 var tran = con.BeginTransaction();
@@ -61,20 +61,16 @@ namespace first_rest_api.Repositories {
             
         }
 
-        public int CreateUser(UserDetails ud)
+        public async Task<UserDetails> CreateUser(UserDetails ud)
         {
             var maxIdSql = "select max(id) as maxid from USER_DETAILS";
             var maxid = 0;
             
-            string connetionString = @"Data Source=localhost;Initial Catalog=first_rest_api;User ID=sa;Password=Niamul@2012";
-
-            SqlConnection connection = new SqlConnection(connetionString);
+            using(var con = await DbHelper.GetDbConnection().ConfigureAwait(false)) {
             
-            
-            connection.Open();
-            var tran = connection.BeginTransaction();
+                var tran = con.BeginTransaction();
 
-                var command1 = new SqlCommand(maxIdSql, connection, tran);
+                var command1 = new SqlCommand(maxIdSql, con, tran);
                 
                 SqlDataReader rdr1 = command1.ExecuteReader(); 
                 List<int> maxidList = new List<int>();
@@ -86,31 +82,33 @@ namespace first_rest_api.Repositories {
                 
                 maxid = maxidList[0] + 1;
                 rdr1.Close();
+            
 
-            var insertSql = $@"INSERT INTO USER_DETAILS
-            (id,
-            name,
-            address,
-            createdDate,
-            createdBy
-            ) 
-            VALUES(
-            {maxid}, 
-            {DbHelper.GetEnquotedString(ud.name)}, 
-            {DbHelper.GetEnquotedString(ud.address)}, 
-            {DbHelper.GetFormattedDate(ud.createdDate)}, 
-            {DbHelper.GetEnquotedString(ud.createdBy)}
-            )";
+                var insertSql = $@"INSERT INTO USER_DETAILS
+                (id,
+                name,
+                address,
+                createdDate,
+                createdBy
+                ) 
+                VALUES(
+                {maxid}, 
+                {DbHelper.GetEnquotedString(ud.name)}, 
+                {DbHelper.GetEnquotedString(ud.address)}, 
+                {DbHelper.GetFormattedDate(ud.createdDate)}, 
+                {DbHelper.GetEnquotedString(ud.createdBy)}
+                )";
 
-
-            var command2 = new SqlCommand(insertSql, connection, tran);
-            using (command2) {
-                Console.WriteLine("Insert SQL : "+ insertSql);
-                command2.ExecuteNonQuery();
-                tran.Commit();
-                connection.Close();
+                var command2 = new SqlCommand(insertSql, con, tran);
+                using (command2) {
+                    Console.WriteLine("Insert SQL : "+ insertSql);
+                    command2.ExecuteNonQuery();
+                    tran.Commit();
+                    con.Close();
+                }
+                ud.id = maxid;
+                return ud; 
             }
-            return maxid; 
         }
     }
 }
