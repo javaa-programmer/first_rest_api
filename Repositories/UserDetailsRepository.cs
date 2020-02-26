@@ -12,12 +12,9 @@ namespace first_rest_api.Repositories {
 
         public async Task<UserDetails> GetUserDetailsById(int userId)
         {
-            string commandText = @"SELECT * FROM [dbo].[USER_DETAILS]  
-                                        where [id] = " + userId ;
-
             using(var con = await DbHelper.GetDbConnection().ConfigureAwait(false)) {
                 var tran = con.BeginTransaction();
-                var command = new SqlCommand(commandText, con, tran);
+                var command = new SqlCommand(CommandHelper.GetSqlForUserById(userId), con, tran);
                 SqlDataReader rdr = command.ExecuteReader(); 
                 
                 List<UserDetails> userDetailsList = new List<UserDetails>();
@@ -38,12 +35,9 @@ namespace first_rest_api.Repositories {
 
         public async Task<ResultModels<UserDetails>> GetAllUsers() {
                 
-            string commandText = @"SELECT * FROM [dbo].[USER_DETAILS]  
-                                    ORDER BY id";
-
             using(var con = await DbHelper.GetDbConnection().ConfigureAwait(false)) {
                 var tran = con.BeginTransaction();
-                var command = new SqlCommand(commandText, con, tran);
+                var command = new SqlCommand(CommandHelper.GetSqlForAllUser(), con, tran);
                 SqlDataReader rdr = command.ExecuteReader(); 
                 List<UserDetails> userDetailsList = new List<UserDetails>();
                 while (rdr.Read()) {
@@ -63,50 +57,30 @@ namespace first_rest_api.Repositories {
 
         public async Task<UserDetails> CreateUser(UserDetails ud)
         {
-            var maxIdSql = "select max(id) as maxid from USER_DETAILS";
-            var maxid = 0;
-            
             using(var con = await DbHelper.GetDbConnection().ConfigureAwait(false)) {
             
                 var tran = con.BeginTransaction();
-
-                var command1 = new SqlCommand(maxIdSql, con, tran);
-                
-                SqlDataReader rdr1 = command1.ExecuteReader(); 
-                List<int> maxidList = new List<int>();
-                while (rdr1.Read()) {
-                    
-                    var id = Convert.ToInt32(rdr1["maxid"]);
-                    maxidList.Add(id);
-                }
-                
-                maxid = maxidList[0] + 1;
-                rdr1.Close();
-            
-
                 var insertSql = $@"INSERT INTO USER_DETAILS
-                (id,
-                name,
+                (name,
                 address,
                 createdDate,
                 createdBy
                 ) 
                 VALUES(
-                {maxid}, 
                 {DbHelper.GetEnquotedString(ud.name)}, 
                 {DbHelper.GetEnquotedString(ud.address)}, 
                 {DbHelper.GetFormattedDate(ud.createdDate)}, 
                 {DbHelper.GetEnquotedString(ud.createdBy)}
-                )";
+                ); SELECT SCOPE_IDENTITY(); ";
 
                 var command2 = new SqlCommand(insertSql, con, tran);
                 using (command2) {
                     Console.WriteLine("Insert SQL : "+ insertSql);
-                    command2.ExecuteNonQuery();
+                    var id = await command2.ExecuteScalarAsync();
                     tran.Commit();
                     con.Close();
+                    ud.id = id.ToInt();
                 }
-                ud.id = maxid;
                 return ud; 
             }
         }
