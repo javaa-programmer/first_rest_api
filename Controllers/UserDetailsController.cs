@@ -6,6 +6,7 @@ using first_rest_api.Models;
 using first_rest_api.Services;
 using first_rest_api.RequestObjects;
 using first_rest_api.ResponseObjects;
+using first_rest_api.CustomExceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -55,13 +56,21 @@ namespace first_rest_api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> GetUserDetailById(int id)
         {
-            var userDetails = await userDetailsSer.GetUserDetailsById(id);
+            UserDetails userDetails = null;
+            try {
+                userDetails = await userDetailsSer.GetUserDetailsById(id);
+            } catch (UserDetailsException ude) {
+                return NotFound(new ErrorObject () {
+                    message = ude.errorMessage
+                } );
+            }
+
             UserDetailsObject detailsObject = null;
 
             if(userDetails != null) {
                 detailsObject = Mapper.Map<UserDetails, UserDetailsObject>(userDetails);
-            }
-
+            } 
+            
             return Ok(new ReturnedObject<UserDetailsObject>(){
                 Data = detailsObject
             });
@@ -491,10 +500,7 @@ namespace first_rest_api.Controllers
             return base.NotFound();
         }
 
-        public override NotFoundObjectResult NotFound([ActionResultObjectValue] object value)
-        {
-            return base.NotFound(value);
-        }
+        
 
         public override OkResult Ok()
         {

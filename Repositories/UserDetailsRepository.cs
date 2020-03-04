@@ -5,6 +5,7 @@ using System;
 using Microsoft.Data.SqlClient;
 using first_rest_api.Utilities;
 using first_rest_api.ResponseObjects;
+using first_rest_api.CustomExceptions;
 
 namespace first_rest_api.Repositories {
 
@@ -28,7 +29,12 @@ namespace first_rest_api.Repositories {
                     userDetailsList.Add(_userDetail);
                 }
                 
-                return userDetailsList[0]; 
+                if (userDetailsList.Count > 0) {
+                    return userDetailsList[0];
+                } else {
+                    Console.WriteLine("No record found for id : " + userId);
+                    throw new UserDetailsException("User not found for id : "+ userId);
+                } 
             }
                
         }
