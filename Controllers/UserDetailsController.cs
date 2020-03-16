@@ -60,9 +60,7 @@ namespace first_rest_api.Controllers
             try {
                 userDetails = await userDetailsSer.GetUserDetailsById(id);
             } catch (UserDetailsException ude) {
-                return NotFound(new ErrorObject () {
-                    message = ude.errorMessage
-                } );
+                return NotFound(new ErrorObject () {message = ude.errorMessage} );
             }
 
             UserDetailsObject detailsObject = null;
@@ -84,10 +82,14 @@ namespace first_rest_api.Controllers
         public async Task<ActionResult> CreateUserDetails([FromBody] RequestEntities re)
         {
             UserDetails userDetails = new UserDetails();
-            userDetails.name = re.UserDetails.GetProperty("name").GetString();
+            userDetails.firstname = re.UserDetails.GetProperty("firstname").GetString();
+            userDetails.lastname = re.UserDetails.GetProperty("lastname").GetString();
             userDetails.address = re.UserDetails.GetProperty("address").GetString();
-            userDetails.createdBy = "niamuls";
-            userDetails.createdDate = DateTime.Now;
+            userDetails.city = re.UserDetails.GetProperty("city").GetString();
+            userDetails.country = re.UserDetails.GetProperty("country").GetString();
+            userDetails.pincode = re.UserDetails.GetProperty("pincode").GetInt32();
+            userDetails.createdby = "niamuls";
+            userDetails.creationdate = DateTime.Now;
 
             var userDt = await userDetailsSer.CreateUser(userDetails);
             UserDetailsObject udo = Mapper.Map<UserDetails, UserDetailsObject>(userDt);

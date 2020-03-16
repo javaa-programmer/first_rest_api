@@ -22,10 +22,14 @@ namespace first_rest_api.Repositories {
                 while (rdr.Read()) {
                     var _userDetail = new UserDetails();
                     _userDetail.id = Convert.ToInt32(rdr["id"]);
-                    _userDetail.name = rdr["name"].ToString();
+                    _userDetail.firstname = rdr["firstname"].ToString();
+                    _userDetail.lastname = rdr["lastname"].ToString();
                     _userDetail.address = rdr["address"].ToString();
-                    _userDetail.createdBy = rdr["createdBy"].ToString();
-                    _userDetail.createdDate = (DateTime) rdr["createdDate"];
+                    _userDetail.city = rdr["city"].ToString();
+                    _userDetail.country = rdr["country"].ToString();
+                    _userDetail.pincode = Convert.ToInt32(rdr["pincode"]);
+                    _userDetail.createdby = rdr["createdby"].ToString();
+                    _userDetail.creationdate = (DateTime) rdr["creationdate"];
                     userDetailsList.Add(_userDetail);
                 }
                 
@@ -49,10 +53,14 @@ namespace first_rest_api.Repositories {
                 while (rdr.Read()) {
                     var _userDetail = new UserDetails();
                     _userDetail.id = Convert.ToInt32(rdr["id"]);
-                    _userDetail.name = rdr["name"].ToString();
+                    _userDetail.firstname = rdr["firstname"].ToString();
+                    _userDetail.lastname = rdr["lastname"].ToString();
                     _userDetail.address = rdr["address"].ToString();
-                    _userDetail.createdBy = rdr["createdBy"].ToString();
-                    _userDetail.createdDate = (DateTime) rdr["createdDate"];
+                    _userDetail.city = rdr["city"].ToString();
+                    _userDetail.country = rdr["country"].ToString();
+                    _userDetail.pincode = Convert.ToInt32(rdr["pincode"]);
+                    _userDetail.createdby = rdr["createdby"].ToString();
+                    _userDetail.creationdate = (DateTime) rdr["creationdate"];
                     userDetailsList.Add(_userDetail);
                 }
                 con.Close();
@@ -67,16 +75,24 @@ namespace first_rest_api.Repositories {
             
                 var tran = con.BeginTransaction();
                 var insertSql = $@"INSERT INTO USER_DETAILS
-                (name,
+                (firstname,
+                lastname,
                 address,
-                createdDate,
-                createdBy
+                city,
+                country,
+                pincode,
+                creationdate,
+                createdby
                 ) 
                 VALUES(
-                {DbHelper.GetEnquotedString(ud.name)}, 
+                {DbHelper.GetEnquotedString(ud.firstname)}, 
+                {DbHelper.GetEnquotedString(ud.lastname)}, 
                 {DbHelper.GetEnquotedString(ud.address)}, 
-                {DbHelper.GetFormattedDate(ud.createdDate)}, 
-                {DbHelper.GetEnquotedString(ud.createdBy)}
+                {DbHelper.GetEnquotedString(ud.city)}, 
+                {DbHelper.GetEnquotedString(ud.country)}, 
+                {ud.pincode},
+                {DbHelper.GetFormattedDate(ud.creationdate)}, 
+                {DbHelper.GetEnquotedString(ud.createdby)}
                 ); SELECT SCOPE_IDENTITY(); ";
 
                 var command2 = new SqlCommand(insertSql, con, tran);
