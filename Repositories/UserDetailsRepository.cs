@@ -20,17 +20,17 @@ namespace first_rest_api.Repositories {
                 
                 List<UserDetails> userDetailsList = new List<UserDetails>();
                 while (rdr.Read()) {
-                    var _userDetail = new UserDetails();
-                    _userDetail.id = Convert.ToInt32(rdr["id"]);
-                    _userDetail.firstname = rdr["firstname"].ToString();
-                    _userDetail.lastname = rdr["lastname"].ToString();
-                    _userDetail.address = rdr["address"].ToString();
-                    _userDetail.city = rdr["city"].ToString();
-                    _userDetail.country = rdr["country"].ToString();
-                    _userDetail.pincode = Convert.ToInt32(rdr["pincode"]);
-                    _userDetail.createdby = rdr["createdby"].ToString();
-                    _userDetail.creationdate = (DateTime) rdr["creationdate"];
-                    userDetailsList.Add(_userDetail);
+                    var userDetail = new UserDetails();
+                    userDetail.id = Convert.ToInt32(rdr["id"]);
+                    userDetail.firstname = rdr["firstname"].ToString();
+                    userDetail.lastname = rdr["lastname"].ToString();
+                    userDetail.address = rdr["address"].ToString();
+                    userDetail.city = rdr["city"].ToString();
+                    userDetail.country = rdr["country"].ToString();
+                    userDetail.pincode = Convert.ToInt32(rdr["pincode"]);
+                    userDetail.createdby = rdr["createdby"].ToString();
+                    userDetail.creationdate = (DateTime) rdr["creationdate"];
+                    userDetailsList.Add(userDetail);
                 }
                 
                 if (userDetailsList.Count > 0) {
@@ -51,17 +51,17 @@ namespace first_rest_api.Repositories {
                 SqlDataReader rdr = command.ExecuteReader(); 
                 List<UserDetails> userDetailsList = new List<UserDetails>();
                 while (rdr.Read()) {
-                    var _userDetail = new UserDetails();
-                    _userDetail.id = Convert.ToInt32(rdr["id"]);
-                    _userDetail.firstname = rdr["firstname"].ToString();
-                    _userDetail.lastname = rdr["lastname"].ToString();
-                    _userDetail.address = rdr["address"].ToString();
-                    _userDetail.city = rdr["city"].ToString();
-                    _userDetail.country = rdr["country"].ToString();
-                    _userDetail.pincode = Convert.ToInt32(rdr["pincode"]);
-                    _userDetail.createdby = rdr["createdby"].ToString();
-                    _userDetail.creationdate = (DateTime) rdr["creationdate"];
-                    userDetailsList.Add(_userDetail);
+                    var userDetail = new UserDetails();
+                    userDetail.id = Convert.ToInt32(rdr["id"]);
+                    userDetail.firstname = rdr["firstname"].ToString();
+                    userDetail.lastname = rdr["lastname"].ToString();
+                    userDetail.address = rdr["address"].ToString();
+                    userDetail.city = rdr["city"].ToString();
+                    userDetail.country = rdr["country"].ToString();
+                    userDetail.pincode = Convert.ToInt32(rdr["pincode"]);
+                    userDetail.createdby = rdr["createdby"].ToString();
+                    userDetail.creationdate = (DateTime) rdr["creationdate"];
+                    userDetailsList.Add(userDetail);
                 }
                 con.Close();
                 return new ResultModels<UserDetails>(userDetailsList);

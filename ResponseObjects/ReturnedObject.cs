@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace first_rest_api.ResponseObjects
 {
     public class ReturnedObject<T>
@@ -7,6 +9,6 @@ namespace first_rest_api.ResponseObjects
         }
 
         public bool status { get; set; }
-        public T Data { get; set; }
+        public List<T> Data { get; set; }
     }
 }

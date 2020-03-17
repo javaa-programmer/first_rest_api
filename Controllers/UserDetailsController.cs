@@ -15,6 +15,8 @@ using Microsoft.Net.Http.Headers;
 using System.Text;
 using System.IO;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Cors;
+using static first_rest_api.Utilities.ConversionUtils;
 
 namespace first_rest_api.Controllers
 {
@@ -34,26 +36,25 @@ namespace first_rest_api.Controllers
         }
 
         // GET: api/UserDetails
+        [EnableCors("CorsPolicy")]
         [HttpGet]
         [Route("~/api/UserDetails")]
         public async Task<ActionResult> GetUserDetails()
         {
             ResultModels<UserDetails> userDetails = await userDetailsSer.GetAllUsers();
-            ResponseEntities<UserDetailsObject> finalResult = null;
+            List<UserDetailsObject> records = null;
 
-            if(userDetails != null)
-            {
-                List<UserDetailsObject> records = Mapper.Map<List<UserDetails>, List<UserDetailsObject>>(userDetails.Records);
-                finalResult = new ResponseEntities<UserDetailsObject>(records);
+            if(userDetails != null) {
+                records = Mapper.Map<List<UserDetails>, List<UserDetailsObject>>(userDetails.Records);
             }
-
-            return Ok(new ReturnedObject<ResponseEntities<UserDetailsObject>>(){
-                Data = finalResult
+            return Ok(new ReturnedObject<UserDetailsObject>(){
+                Data = records
             });
+            
         }
 
         // GET: api/UserDetails/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult> GetUserDetailById(int id)
         {
             UserDetails userDetails = null;
@@ -64,13 +65,16 @@ namespace first_rest_api.Controllers
             }
 
             UserDetailsObject detailsObject = null;
+            List<UserDetailsObject> detailsObjectList = new List<UserDetailsObject>();
 
             if(userDetails != null) {
                 detailsObject = Mapper.Map<UserDetails, UserDetailsObject>(userDetails);
+                detailsObjectList.Add(detailsObject);
             } 
             
+            Console.WriteLine("UserDetails : " +userDetails);
             return Ok(new ReturnedObject<UserDetailsObject>(){
-                Data = detailsObject
+               Data = detailsObjectList
             });
 
         }
@@ -87,14 +91,16 @@ namespace first_rest_api.Controllers
             userDetails.address = re.UserDetails.GetProperty("address").GetString();
             userDetails.city = re.UserDetails.GetProperty("city").GetString();
             userDetails.country = re.UserDetails.GetProperty("country").GetString();
-            userDetails.pincode = re.UserDetails.GetProperty("pincode").GetInt32();
+            userDetails.pincode = Utilities.ConversionUtils.ToInt(re.UserDetails.GetProperty("pincode").GetString());
             userDetails.createdby = "niamuls";
             userDetails.creationdate = DateTime.Now;
 
             var userDt = await userDetailsSer.CreateUser(userDetails);
             UserDetailsObject udo = Mapper.Map<UserDetails, UserDetailsObject>(userDt);
+            List<UserDetailsObject> detailsObjectList = new List<UserDetailsObject>();
+            detailsObjectList.Add(udo);
             return Ok(new ReturnedObject<UserDetailsObject>(){
-                Data = udo
+                Data = detailsObjectList
             });
         }
 

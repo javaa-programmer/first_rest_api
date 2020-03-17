@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using first_rest_api.Utilities;
 using System;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 
 namespace first_rest_api
 {
@@ -29,18 +30,19 @@ namespace first_rest_api
             services.AddSingleton(mapper);
             services.AddControllers();
 
-            services.AddCors(options => {
-                options.AddPolicy(
-                "CorsPolicy",
-                builder => builder.WithOrigins("http://localhost:4200")
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+            //CORS
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                    .WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
             });
 
-            
-
             services.AddAuthentication();
+
+            services.AddMvc();
 
         }
 
@@ -62,16 +64,16 @@ namespace first_rest_api
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors("CorsPolicy");
+            app.UseAuthentication();
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers().RequireCors("CorsPolicy");
             });
 
-            app.UseCors(builder => builder.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyHeader());
-
+            
            // app.UseStaticFiles();
            Constants.SetConnectionString(Configuration.GetConnectionString("dafultConnection"));
             
