@@ -28,6 +28,7 @@ namespace first_rest_api.Repositories {
                     userDetail.city = rdr["city"].ToString();
                     userDetail.country = rdr["country"].ToString();
                     userDetail.pincode = Convert.ToInt32(rdr["pincode"]);
+                    userDetail.profilepic = rdr["profilepic"].ToString();
                     userDetail.createdby = rdr["createdby"].ToString();
                     userDetail.creationdate = (DateTime) rdr["creationdate"];
                     userDetailsList.Add(userDetail);
@@ -59,6 +60,7 @@ namespace first_rest_api.Repositories {
                     userDetail.city = rdr["city"].ToString();
                     userDetail.country = rdr["country"].ToString();
                     userDetail.pincode = Convert.ToInt32(rdr["pincode"]);
+                    userDetail.profilepic = rdr["profilepic"].ToString();
                     userDetail.createdby = rdr["createdby"].ToString();
                     userDetail.creationdate = (DateTime) rdr["creationdate"];
                     userDetailsList.Add(userDetail);
@@ -81,6 +83,7 @@ namespace first_rest_api.Repositories {
                 city,
                 country,
                 pincode,
+                profilepic,
                 creationdate,
                 createdby
                 ) 
@@ -91,6 +94,7 @@ namespace first_rest_api.Repositories {
                 {DbHelper.GetEnquotedString(ud.city)}, 
                 {DbHelper.GetEnquotedString(ud.country)}, 
                 {ud.pincode},
+                {DbHelper.GetEnquotedString(ud.profilepic)},
                 {DbHelper.GetFormattedDate(ud.creationdate)}, 
                 {DbHelper.GetEnquotedString(ud.createdby)}
                 ); SELECT SCOPE_IDENTITY(); ";

@@ -9,6 +9,7 @@ namespace first_rest_api.ResponseObjects {
         public string city {get; set; }
         public string country {get; set; }
         public int pincode {get; set; }
+        public string profilepic {get; set; }
         public DateTime creationdate {get; set; }
         public string createdby {get; set; }
     }
