@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace first_rest_api.Models {
     public class UserDetails {

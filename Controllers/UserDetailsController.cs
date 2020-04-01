@@ -4,13 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using first_rest_api.Models;
 using first_rest_api.Services;
-using first_rest_api.RequestObjects;
 using first_rest_api.ResponseObjects;
 using first_rest_api.CustomExceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.Extensions.Primitives;
-using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http.Headers;
 
@@ -53,40 +50,6 @@ namespace first_rest_api.Controllers
             
         }
 
-
-/*        [HttpPost]
-        [Route("~/api/uploadImage")]
-        [DisableRequestSizeLimit]
-        [RequestFormLimits(MultipartBodyLengthLimit = Int64.MaxValue)]
-
-        public async Task<IActionResult> UploadTest()
-        {
-	        var files = Request.Form.Files;
-	        if (files != null && files.Count == 0)
-	        {
-		        throw new InvalidRequestException("Invalid Request", 999);
-	        }
-
-	        string param1 = Request.Form["Param1"].ToString();
-	        string param2 = Request.Form["Param2"].ToString();
-
-            Console.WriteLine("Param 1: "+ param1);
-            Console.WriteLine("Param 2: "+ param2);
-
-	        IFormFile file = files[0];
-	        string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-	        string fileUploadPath = "/path/to/upload"; // usually configured base path to upload files
-
-            var result = await userDetailsSer.UploadTest(file, fileUploadPath);
-            List<String> imagePath = new List<String>();
-            imagePath.Add(result);
-
-            return Ok(new ReturnedObject<String>(){
-	            Data = imagePath
-	        });
-        }
-
-*/
 
         // GET: api/UserDetails/5
         [HttpGet("{id:int}")]
@@ -177,8 +140,8 @@ namespace first_rest_api.Controllers
 	        } else {
                 IFormFile file = files[0];
 	            string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-	            string fileUploadPath = "/path/to/upload"; // usually configured base path to upload files
-                var filepath = await userDetailsSer.UploadTest(file, fileUploadPath);
+	            string fileUploadPath = "\\path\\to\\upload"; // usually configured base path to upload files
+                var filepath = await userDetailsSer.UploadImage(file, fileUploadPath);
                 userDetails.profilepic = filepath;
             }
 
@@ -198,5 +161,26 @@ namespace first_rest_api.Controllers
             var headerValues = Request.Headers["Authorization"];
             return headerValues.Equals("ums-token");
         }
+
+
+        // GET: api/getImage/5
+/*        [HttpGet("{id:int}")]
+        [Route("~/api/getImage/{id:int}")]
+        public async Task<ActionResult> GetUserImage(int id)
+        {
+            Console.Write("User Id : " + id);
+            UserDetails userDetails = null;
+            try {
+                userDetails = await userDetailsSer.GetUserDetailsById(id);
+                var fileLocation = userDetails.profilepic;
+                Byte[] b = System.IO.File.ReadAllBytes(@fileLocation); 
+                return File(b, "image/jpeg");
+            } catch (UserDetailsException ude) {
+                return NotFound(new ErrorObject () {message = ude.errorMessage} );
+            }
+
+        }        
+*/
+
     }
 }

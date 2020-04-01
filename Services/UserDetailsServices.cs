@@ -28,19 +28,17 @@ namespace first_rest_api.Services {
         }
 
         public async Task<UserDetails> CreateUser(UserDetails ud) {
-
             return await _userRepository.CreateUser(ud);
         }
 
         // Service
-        public async Task<string> UploadTest(IFormFile file, string fileUploadPath)
+        public async Task<string> UploadImage(IFormFile file, string fileUploadPath)
         {
 	        string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
 
-	        string folderPath = $"TestPath/1";
+	        string folderPath = $"TestPath\\1";
 
 	        string folderWisePath = Path.Combine(fileUploadPath, folderPath);
-//	        IOHelper.CreateFolderIfNotExits(folderWisePath);
 
             System.IO.Directory.CreateDirectory(folderWisePath);
 	        string fullPath = Path.Combine(folderWisePath, fileName);
