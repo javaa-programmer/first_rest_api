@@ -25,6 +25,7 @@ namespace first_rest_api.Repositories {
                     userDetail.firstname = rdr["firstname"].ToString();
                     userDetail.lastname = rdr["lastname"].ToString();
                     userDetail.address = rdr["address"].ToString();
+                    userDetail.dateofbirth = (DateTime) rdr["date_of_birth"];
                     userDetail.city = rdr["city"].ToString();
                     userDetail.country = rdr["country"].ToString();
                     userDetail.pincode = Convert.ToInt32(rdr["pincode"]);
@@ -80,6 +81,7 @@ namespace first_rest_api.Repositories {
                 (firstname,
                 lastname,
                 address,
+                date_of_birth,
                 city,
                 country,
                 pincode,
@@ -91,6 +93,7 @@ namespace first_rest_api.Repositories {
                 {DbHelper.GetEnquotedString(ud.firstname)}, 
                 {DbHelper.GetEnquotedString(ud.lastname)}, 
                 {DbHelper.GetEnquotedString(ud.address)}, 
+                {DbHelper.GetFormattedDate(ud.dateofbirth)},
                 {DbHelper.GetEnquotedString(ud.city)}, 
                 {DbHelper.GetEnquotedString(ud.country)}, 
                 {ud.pincode},

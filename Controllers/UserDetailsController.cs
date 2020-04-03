@@ -10,6 +10,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http.Headers;
+using System.Globalization;
 
 namespace first_rest_api.Controllers
 {
@@ -126,6 +127,11 @@ namespace first_rest_api.Controllers
             userDetails.firstname = Request.Form["firstname"].ToString();
             userDetails.lastname = Request.Form["lastname"].ToString();
             userDetails.address = Request.Form["address"].ToString();
+
+            Console.WriteLine("Date of Birth: "+Request.Form["dateofbirth"].ToString());
+            userDetails.dateofbirth = DateTime.ParseExact(Request.Form["dateofbirth"].ToString(), "yyyyMMdd",
+                CultureInfo.InvariantCulture);
+
             userDetails.city = Request.Form["city"].ToString();
             userDetails.country = Request.Form["country"].ToString();
             userDetails.pincode = Utilities.ConversionUtils.ToInt(Request.Form["pincode"].ToString());
