@@ -35,8 +35,10 @@ namespace first_rest_api.Controllers
         [Route("~/api/UserDetails")]
         public async Task<ActionResult> GetUserDetails()
         {
-            if(!isValidRequest()) {
-                throw new InvalidRequestException("Invalid Request", 999);
+            try {
+                if(!isValidRequest()) { }
+            } catch (InvalidRequestException iex) {
+                return BadRequest(iex.Message);
             }
 
             ResultModels<UserDetails> userDetails = await userDetailsSer.GetAllUsers();
@@ -142,7 +144,7 @@ namespace first_rest_api.Controllers
             var files = Request.Form.Files;
 	        if (files != null && files.Count == 0)
 	        {
-		        throw new InvalidRequestException("Invalid Request", 999);
+//		        throw new InvalidRequestException("Invalid Request", 999);
 	        } else {
                 IFormFile file = files[0];
 	            string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
@@ -165,6 +167,11 @@ namespace first_rest_api.Controllers
          */
         public Boolean isValidRequest() {
             var headerValues = Request.Headers["Authorization"];
+           // return headerValues.Equals("ums-token");
+            if(!headerValues.Equals("ums-token")) {
+                throw new InvalidRequestException("Token Is Not Valid", 999);
+            }
+
             return headerValues.Equals("ums-token");
         }
 

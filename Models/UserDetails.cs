@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace first_rest_api.Models {
     public class UserDetails {
@@ -14,5 +15,6 @@ namespace first_rest_api.Models {
         public string profilepic { get; set; }
         public DateTime creationdate {get; set; }
         public string createdby {get; set; }
+        public IFormFile image {get; set; }
     }
 }
