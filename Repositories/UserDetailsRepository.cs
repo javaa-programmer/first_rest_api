@@ -67,7 +67,12 @@ namespace first_rest_api.Repositories {
                     userDetailsList.Add(userDetail);
                 }
                 con.Close();
-                return new ResultModels<UserDetails>(userDetailsList);
+                if (userDetailsList.Count > 0) {
+                    return new ResultModels<UserDetails>(userDetailsList);;
+                } else {
+                    Console.WriteLine("No User Found");
+                    throw new UserDetailsException("No User Found");
+                } 
             }
             
         }

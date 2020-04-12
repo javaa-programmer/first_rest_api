@@ -40,16 +40,21 @@ namespace first_rest_api.Controllers
             } catch (InvalidRequestException iex) {
                 return BadRequest(iex.Message);
             }
-
-            ResultModels<UserDetails> userDetails = await userDetailsSer.GetAllUsers();
-            List<UserDetailsObject> records = null;
-
-            if(userDetails != null) {
-                records = Mapper.Map<List<UserDetails>, List<UserDetailsObject>>(userDetails.Records);
+            try {
+                ResultModels<UserDetails> userDetails = await userDetailsSer.GetAllUsers();
+                List<UserDetailsObject> records = null;
+                if(userDetails != null) {
+                    records = Mapper.Map<List<UserDetails>, List<UserDetailsObject>>(userDetails.Records);
+                }
+                return Ok(new ReturnedObject<UserDetailsObject>(){
+                    Data = records
+                });
+            } catch (UserDetailsException ude) {
+                return NotFound(new ErrorObject () {message = ude.errorMessage} );
+            } catch (Exception ex) {
+                return NotFound(new ErrorObject () {message = "Could not connect to Database. Check the Database server is running."} );
             }
-            return Ok(new ReturnedObject<UserDetailsObject>(){
-                Data = records
-            });
+
             
         }
 
@@ -66,8 +71,10 @@ namespace first_rest_api.Controllers
                 userDetails = await userDetailsSer.GetUserDetailsById(id);
             } catch (UserDetailsException ude) {
                 return NotFound(new ErrorObject () {message = ude.errorMessage} );
+            } catch (Exception ex) {
+                Console.WriteLine("Exception Type: "+ ex.GetType());
+                return NotFound(new ErrorObject () {message = "Could not connect to Database. Check the Database server is running."} );
             }
-
             UserDetailsObject detailsObject = null;
             List<UserDetailsObject> detailsObjectList = new List<UserDetailsObject>();
 
@@ -130,7 +137,6 @@ namespace first_rest_api.Controllers
             userDetails.lastname = Request.Form["lastname"].ToString();
             userDetails.address = Request.Form["address"].ToString();
 
-            Console.WriteLine("Date of Birth: "+Request.Form["dateofbirth"].ToString());
             userDetails.dateofbirth = DateTime.ParseExact(Request.Form["dateofbirth"].ToString(), "yyyyMMdd",
                 CultureInfo.InvariantCulture);
 
@@ -153,13 +159,17 @@ namespace first_rest_api.Controllers
                 userDetails.profilepic = filepath;
             }
 
-            var userDt = await userDetailsSer.CreateUser(userDetails);
-            UserDetailsObject udo = Mapper.Map<UserDetails, UserDetailsObject>(userDt);
-            List<UserDetailsObject> detailsObjectList = new List<UserDetailsObject>();
-            detailsObjectList.Add(udo);
-            return Ok(new ReturnedObject<UserDetailsObject>(){
-                Data = detailsObjectList
-            });
+            try {
+                var userDt = await userDetailsSer.CreateUser(userDetails);
+                UserDetailsObject udo = Mapper.Map<UserDetails, UserDetailsObject>(userDt);
+                List<UserDetailsObject> detailsObjectList = new List<UserDetailsObject>();
+                detailsObjectList.Add(udo);
+                return Ok(new ReturnedObject<UserDetailsObject>(){
+                    Data = detailsObjectList
+                });
+            } catch (Exception ex) {
+                return NotFound(new ErrorObject () {message = "Could not connect to Database. Check the Database server is running."} );
+            }
         }
         
         /**
